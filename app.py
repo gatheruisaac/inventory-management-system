@@ -3,56 +3,6 @@ import requests
 
 app = Flask(__name__)
 
-# This list acts as our temporary database
-inventory = [
-    {
-        "id": 1,
-        "barcode": "0099482425685",
-        "product_name": "Organic Almond Milk",
-        "brands": "Silk",
-        "ingredients_text": "Filtered water, almonds, cane sugar, vitamin E acetate",
-        "quantity": 120,
-        "price": 4.99,
-        "category": "Beverages",
-        "nutriscore_grade": "b"
-    },
-    {
-        "id": 2,
-        "barcode": "016000275287",
-        "product_name": "Cheerios",
-        "brands": "General Mills",
-        "ingredients_text": "Whole grain oats, modified corn starch, sugar, salt",
-        "quantity": 85,
-        "price": 5.49,
-        "category": "Cereals",
-        "nutriscore_grade": "c"
-    },
-    {
-        "id": 3,
-        "barcode": "021000658978",
-        "product_name": "Skippy Creamy Peanut Butter",
-        "brands": "Skippy",
-        "ingredients_text": "Roasted peanuts, sugar, hydrogenated vegetable oil, salt",
-        "quantity": 60,
-        "price": 3.79,
-        "category": "Condiments",
-        "nutriscore_grade": "d"
-    },
-    {
-        "id": 4,
-        "barcode": "070038594641",
-        "product_name": "Tropicana Orange Juice",
-        "brands": "Tropicana",
-        "ingredients_text": "100% pure squeezed pasteurized orange juice",
-        "quantity": 200,
-        "price": 6.99,
-        "category": "Beverages",
-        "nutriscore_grade": "a"
-    }
-]
-
-# This keeps track of what ID to assign to the next new item
-next_id = 5
 
 
 # GET /inventory - return all items in the inventory list
