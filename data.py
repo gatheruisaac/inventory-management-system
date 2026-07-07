@@ -1,7 +1,7 @@
 inventory = [
     {
         "id": 1,
-        "name": "Organic Almond Milk",
+        "product_name": "Organic Almond Milk",
         "barcode": "1234567890123",
         "quantity": 15,
         "price": 450,
@@ -9,7 +9,7 @@ inventory = [
     },
     {
         "id": 2,
-        "name": "Whole Wheat Bread",
+        "product_name": "Whole Wheat Bread",
         "barcode": "2345678901234",
         "quantity": 30,
         "price": 180,
@@ -17,7 +17,7 @@ inventory = [
     },
     {
         "id": 3,
-        "name": "Corn Flakes",
+        "product_name": "Corn Flakes",
         "barcode": "3456789012345",
         "quantity": 20,
         "price": 550,
@@ -25,7 +25,7 @@ inventory = [
     },
     {
         "id": 4,
-        "name": "Peanut Butter",
+        "product_name": "Peanut Butter",
         "barcode": "4567890123456",
         "quantity": 12,
         "price": 720,
@@ -33,7 +33,7 @@ inventory = [
     },
     {
         "id": 5,
-        "name": "Orange Juice",
+        "product_name": "Orange Juice",
         "barcode": "5678901234567",
         "quantity": 18,
         "price": 350,

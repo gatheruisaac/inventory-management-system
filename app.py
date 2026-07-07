@@ -1,17 +1,20 @@
 from flask import Flask, jsonify, request
 import requests
+from data import inventory
 
 app = Flask(__name__)
 
+# Automatically generate the next ID
+next_id = len(inventory) + 1
 
 
-# GET /inventory - return all items in the inventory list
+# GET /inventory - Return all inventory items
 @app.route("/inventory", methods=["GET"])
 def get_all_items():
     return jsonify(inventory), 200
 
 
-# GET /inventory/<id> - return one item by its ID
+# GET /inventory/<id> - Return one inventory item
 @app.route("/inventory/<int:item_id>", methods=["GET"])
 def get_one_item(item_id):
     for item in inventory:
@@ -21,14 +24,14 @@ def get_one_item(item_id):
     return jsonify({"error": "Item not found"}), 404
 
 
-# POST /inventory - add a new item to the inventory list
+# POST /inventory - Add a new inventory item
 @app.route("/inventory", methods=["POST"])
 def add_item():
     global next_id
 
     data = request.get_json()
 
-    if data is None:
+    if not data:
         return jsonify({"error": "Request body must be JSON"}), 400
 
     if "product_name" not in data:
@@ -47,71 +50,80 @@ def add_item():
     }
 
     inventory.append(new_item)
-    next_id = next_id + 1
+    next_id += 1
 
     return jsonify(new_item), 201
 
 
-# PATCH /inventory/<id> - update fields on an existing item
+# PATCH /inventory/<id> - Update an inventory item
 @app.route("/inventory/<int:item_id>", methods=["PATCH"])
 def update_item(item_id):
     data = request.get_json()
 
-    if data is None:
+    if not data:
         return jsonify({"error": "Request body must be JSON"}), 400
 
     for item in inventory:
         if item["id"] == item_id:
 
-            # Only update the fields that were included in the request
-            if "product_name" in data:
-                item["product_name"] = data["product_name"]
-            if "brands" in data:
-                item["brands"] = data["brands"]
-            if "ingredients_text" in data:
-                item["ingredients_text"] = data["ingredients_text"]
-            if "quantity" in data:
-                item["quantity"] = data["quantity"]
-            if "price" in data:
-                item["price"] = data["price"]
-            if "category" in data:
-                item["category"] = data["category"]
-            if "nutriscore_grade" in data:
-                item["nutriscore_grade"] = data["nutriscore_grade"]
+            fields = [
+                "product_name",
+                "barcode",
+                "brands",
+                "ingredients_text",
+                "quantity",
+                "price",
+                "category",
+                "nutriscore_grade"
+            ]
+
+            for field in fields:
+                if field in data:
+                    item[field] = data[field]
 
             return jsonify(item), 200
 
     return jsonify({"error": "Item not found"}), 404
 
 
-# DELETE /inventory/<id> - remove an item from the inventory list
+# DELETE /inventory/<id> - Delete an inventory item
 @app.route("/inventory/<int:item_id>", methods=["DELETE"])
 def delete_item(item_id):
     for item in inventory:
         if item["id"] == item_id:
             inventory.remove(item)
-            return jsonify({"message": "Item deleted", "id": item_id}), 200
+            return jsonify({
+                "message": "Item deleted successfully",
+                "id": item_id
+            }), 200
 
     return jsonify({"error": "Item not found"}), 404
 
 
-# GET /lookup/<barcode> - fetch product info from OpenFoodFacts by barcode
+# GET /lookup/<barcode> - Fetch product from OpenFoodFacts
 @app.route("/lookup/<barcode>", methods=["GET"])
 def lookup_barcode(barcode):
-    url = "https://world.openfoodfacts.org/api/v0/product/" + barcode + ".json"
-    response = requests.get(url)
-    data = response.json()
+    url = f"https://world.openfoodfacts.org/api/v0/product/{barcode}.json"
 
-    if data["status"] != 1:
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+    except requests.exceptions.RequestException:
+        return jsonify({"error": "Could not connect to OpenFoodFacts"}), 503
+
+    if data.get("status") != 1:
         return jsonify({"error": "Product not found on OpenFoodFacts"}), 404
 
-    product = data["product"]
+    product = data.get("product", {})
 
     result = {
         "barcode": barcode,
         "product_name": product.get("product_name", ""),
         "brands": product.get("brands", ""),
         "ingredients_text": product.get("ingredients_text", ""),
+        "category": product.get("categories", ""),
         "nutriscore_grade": product.get("nutriscore_grade", ""),
         "image_url": product.get("image_url", "")
     }
