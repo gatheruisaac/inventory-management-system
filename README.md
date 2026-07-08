@@ -2,63 +2,35 @@
 
 ## Overview
 
-This project is a Python Flask REST API that allows users to manage inventory items through CRUD operations. It also integrates with the OpenFoodFacts API, allowing users to search products by barcode and add them directly to the inventory through a Command Line Interface (CLI).
+The Inventory Management System is a Python Flask REST API that allows users to manage inventory items through CRUD operations. It also integrates with the OpenFoodFacts API, enabling users to search for products by barcode and add them directly to the inventory through a Command Line Interface (CLI).
 
-## Features
+---
 
-- View all inventory items
-- View a single inventory item
-- Add, update, and delete products
-- Lookup products using the OpenFoodFacts API
-- Add products from OpenFoodFacts to the inventory
-- Command Line Interface (CLI)
-- Unit testing with pytest
+# Installation
 
-## Technologies Used
-
-- Python
-- Flask
-- Requests
-- Pytest
-- Git & GitHub
-
-## Project Structure
-
-```text
-inventory-management-system/
-├── app.py
-├── cli.py
-├── data.py
-├── routes/
-├── services/
-├── tests/
-├── requirements.txt
-└── README.md
-```
-
-## Installation
-
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/gatheruisaac/inventory-management-system.git
 cd inventory-management-system
 ```
 
-Create and activate a virtual environment:
+### 2. Create and activate a virtual environment
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-Install the required dependencies:
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running the Application
+---
+
+# Running the Server
 
 Start the Flask server:
 
@@ -66,24 +38,27 @@ Start the Flask server:
 python app.py
 ```
 
-Open another terminal, activate the virtual environment again, and run the CLI:
+The API runs at:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+# Running the CLI
+
+With the Flask server running, open another terminal and run:
 
 ```bash
 python cli.py
 ```
 
-## API Endpoints
+The CLI provides an interactive menu for managing inventory and importing products from OpenFoodFacts.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/inventory` | Get all inventory items |
-| GET | `/inventory/<id>` | Get one inventory item |
-| POST | `/inventory` | Add a new inventory item |
-| PATCH | `/inventory/<id>` | Update an inventory item |
-| DELETE | `/inventory/<id>` | Delete an inventory item |
-| GET | `/lookup/<barcode>` | Lookup a product using OpenFoodFacts |
+---
 
-## Running Tests
+# Running Tests
 
 Run all tests with:
 
@@ -91,12 +66,177 @@ Run all tests with:
 python -m pytest
 ```
 
-## Author
+---
 
-**Isaac Gatheru**
+# API Endpoints
 
-GitHub: https://github.com/gatheruisaac
+## Inventory
 
-## License
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/inventory` | Fetch all inventory items |
+| GET | `/inventory/<id>` | Fetch a single inventory item |
+| POST | `/inventory` | Add a new inventory item |
+| PATCH | `/inventory/<id>` | Update an inventory item |
+| DELETE | `/inventory/<id>` | Delete an inventory item |
 
-This project is licensed under the MIT License.
+### Example GET `/inventory`
+
+```json
+[
+  {
+    "id": 1,
+    "product_name": "Organic Almond Milk",
+    "barcode": "1234567890123",
+    "brands": "Silk",
+    "quantity": 15,
+    "price": 450,
+    "category": "Dairy Alternatives",
+    "nutriscore_grade": "A"
+  }
+]
+```
+
+### Example POST `/inventory`
+
+**Request**
+
+```json
+{
+  "product_name": "Orange Juice",
+  "barcode": "1234567890123",
+  "brands": "Minute Maid",
+  "ingredients_text": "Orange juice",
+  "quantity": 20,
+  "price": 350,
+  "category": "Beverages",
+  "nutriscore_grade": "B"
+}
+```
+
+**Response**
+
+```json
+{
+  "id": 6,
+  "product_name": "Orange Juice",
+  "barcode": "1234567890123",
+  "brands": "Minute Maid",
+  "ingredients_text": "Orange juice",
+  "quantity": 20,
+  "price": 350,
+  "category": "Beverages",
+  "nutriscore_grade": "B"
+}
+```
+
+### Example PATCH `/inventory/<id>`
+
+**Request**
+
+```json
+{
+  "quantity": 30,
+  "price": 400
+}
+```
+
+**Response**
+
+```json
+{
+  "id": 6,
+  "quantity": 30,
+  "price": 400
+}
+```
+
+### DELETE `/inventory/<id>`
+
+- Returns **200 OK** when the item is deleted successfully.
+- Returns **404 Not Found** if the item does not exist.
+
+---
+
+# External API Integration
+
+This project integrates with the **OpenFoodFacts API** to retrieve product information using a barcode.
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/lookup/<barcode>` | Retrieve product information from OpenFoodFacts |
+
+### Example
+
+```
+GET /lookup/5449000000996
+```
+
+**Response**
+
+```json
+{
+  "barcode": "5449000000996",
+  "product_name": "coca-cola",
+  "brands": "Coca-Cola",
+  "ingredients_text": "carbonated water, sugar...",
+  "category": "Colas",
+  "nutriscore_grade": "E",
+  "image_url": "https://..."
+}
+```
+
+The CLI allows users to import a product from OpenFoodFacts into the inventory by providing the quantity and price.
+
+---
+
+# CLI Options
+
+Run the CLI with:
+
+```bash
+python cli.py
+```
+
+| Option | Action |
+|---------|--------|
+| 1 | View Inventory |
+| 2 | View Product |
+| 3 | Add Product |
+| 4 | Update Product |
+| 5 | Delete Product |
+| 6 | Lookup Product (OpenFoodFacts) |
+| 7 | Exit |
+
+---
+
+# Project Structure
+
+```text
+inventory-management-system/
+├── app.py
+├── cli.py
+├── data.py
+├── requirements.txt
+├── README.md
+├── routes/
+│   ├── inventory.py
+│   └── openfoodfacts.py
+├── services/
+│   ├── api_service.py
+│   └── __init__.py
+└── tests/
+    ├── test_inventory.py
+    ├── test_api.py
+    └── test_cli.py
+```
+
+---
+
+# Technologies Used
+
+- Python
+- Flask
+- Requests
+- Pytest
+- Git & GitHub
