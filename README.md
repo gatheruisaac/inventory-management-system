@@ -210,6 +210,52 @@ python cli.py
 
 ---
 
+# Example CLI Session
+
+```text
+===================================
+ INVENTORY MANAGEMENT SYSTEM
+===================================
+1. View Inventory
+2. View Product
+3. Add Product
+4. Update Product
+5. Delete Product
+6. Lookup Product (OpenFoodFacts)
+7. Exit
+
+Enter Choice: 6
+
+========== OPENFOODFACTS LOOKUP ==========
+Enter Barcode: 5449000000996
+
+========== PRODUCT FOUND ==========
+barcode: 5449000000996
+product_name: coca-cola
+brands: Coca-Cola
+category: Colas
+nutriscore_grade: e
+
+Add this product to inventory? (y/n): y
+
+Quantity: 20
+Price: 180
+
+✅ Product added to inventory successfully!
+
+Enter Choice: 1
+
+========== INVENTORY ==========
+ID: 1 | Name: Organic Almond Milk | Price: Ksh 450 | Quantity: 15
+ID: 2 | Name: Whole Wheat Bread | Price: Ksh 180 | Quantity: 30
+ID: 3 | Name: Corn Flakes | Price: Ksh 550 | Quantity: 20
+ID: 4 | Name: Peanut Butter | Price: Ksh 720 | Quantity: 12
+ID: 5 | Name: Orange Juice | Price: Ksh 350 | Quantity: 18
+ID: 6 | Name: coca-cola | Price: Ksh 180.0 | Quantity: 20
+```
+
+---
+
 # Project Structure
 
 ```text
