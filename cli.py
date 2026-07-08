@@ -51,7 +51,10 @@ def add_product():
         "nutriscore_grade": input("Nutriscore Grade: ")
     }
 
-    response = requests.post(f"{BASE_URL}/inventory", json=product)
+    response = requests.post(
+        f"{BASE_URL}/inventory",
+        json=product
+    )
 
     if response.status_code == 201:
         print("\n✅ Product Added Successfully!")
@@ -92,7 +95,9 @@ def delete_product():
 
     item_id = input("Enter Product ID: ")
 
-    response = requests.delete(f"{BASE_URL}/inventory/{item_id}")
+    response = requests.delete(
+        f"{BASE_URL}/inventory/{item_id}"
+    )
 
     if response.status_code == 200:
         print("\n✅ Product Deleted Successfully!")
@@ -105,18 +110,39 @@ def lookup_product():
 
     barcode = input("Enter Barcode: ")
 
-    response = requests.get(f"{BASE_URL}/lookup/{barcode}")
+    response = requests.get(
+        f"{BASE_URL}/lookup/{barcode}"
+    )
 
-    if response.status_code == 200:
-        product = response.json()
-
-        print("\n========== PRODUCT FOUND ==========")
-
-        for key, value in product.items():
-            print(f"{key}: {value}")
-
-    else:
+    if response.status_code != 200:
         print(response.json())
+        return
+
+    product = response.json()
+
+    print("\n========== PRODUCT FOUND ==========")
+
+    for key, value in product.items():
+        print(f"{key}: {value}")
+
+    choice = input("\nAdd this product to inventory? (y/n): ").lower()
+
+    if choice != "y":
+        return
+
+    product["quantity"] = int(input("Quantity: "))
+    product["price"] = float(input("Price: "))
+
+    add_response = requests.post(
+        f"{BASE_URL}/inventory",
+        json=product
+    )
+
+    if add_response.status_code == 201:
+        print("\n✅ Product added to inventory successfully!")
+        print(add_response.json())
+    else:
+        print(add_response.json())
 
 
 def menu():
